@@ -34,7 +34,7 @@ export default function Books() {
       formData.append("title", newBook.title);
       formData.append("author", newBook.author);
       formData.append("image", newBook.image);
-      formData.append("available", newBook.available);
+      formData.append("available", newBook.available.toString());
 
       await fetch("/api/books", {
         method: "POST",
