@@ -16,7 +16,7 @@ const Navbar = () => {
             <Image src={'/book.png'} width={50} height={50} alt='api' />
         </div>
 
-        <div className='flex items-center space-x-7 '>
+        <div className='flex items-center md:space-x-7 space-x-3'>
         <IoIosContact size={30}  className='cursor-pointer '/>
         <BiCart size={30} className='cursor-pointer '/>
 
