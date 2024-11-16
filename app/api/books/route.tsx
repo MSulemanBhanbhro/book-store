@@ -20,7 +20,7 @@ let books: Book[] = [
     id: 2,
     title: "Shah Jo Risalo",
     author: "Shah Abdul Latif",
-    image: "/zarb.jpg",
+    image: "/shah.png",
     available: true,
   },
   {
