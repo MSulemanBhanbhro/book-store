@@ -12,28 +12,28 @@ let books: Book[] = [
   {
     id: 1,
     title: "Bang-e-Dra",
-    author: "Allama  Iqbal",
+    author: "Allama Iqbal",
     image: "/dra.webp",
     available: true,
   },
   {
     id: 2,
     title: "Shah Jo Risalo",
-    author: "Shah abdul Latif",
-    image: "/shah.png",
+    author: "Shah Abdul Latif",
+    image: "/zarb.jpg",
     available: true,
   },
   {
     id: 3,
     title: "Asrar-e-Khudi",
-    author: "Allama  Iqbal",
+    author: "Allama Iqbal",
     image: "/khudi.jpg",
     available: true,
   },
   {
     id: 4,
     title: "Zarb-e-Kalim",
-    author: "Allama  Iqbal",
+    author: "Allama Iqbal",
     image: "/zarb.jpg",
     available: true,
   },
@@ -53,12 +53,42 @@ let books: Book[] = [
   },
 ];
 
+// GET Method
 export async function GET() {
-  try{
-    return NextResponse.json(books,{status:200})
-  }catch(error){
-    return NextResponse.json({message:"Fetching Your Data"},
-      {status:500}
-    )
+  return NextResponse.json(books, { status: 200 });
+}
+
+// POST Method
+export async function POST(req: Request) {
+  try {
+    const newBook: Book = await req.json();
+    books.push({ ...newBook, id: books.length + 1 });
+    return NextResponse.json({ message: "Book added successfully!" }, { status: 201 });
+  } catch (error) {
+    return NextResponse.json({ message: "Error adding book!" }, { status: 500 });
+  }
+}
+
+// PUT Method
+export async function PUT(req: Request) {
+  try {
+    const updatedBook: Book = await req.json();
+    books = books.map((book) =>
+      book.id === updatedBook.id ? { ...book, ...updatedBook } : book
+    );
+    return NextResponse.json({ message: "Book updated successfully!" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: "Error updating book!" }, { status: 500 });
+  }
+}
+
+// DELETE Method
+export async function DELETE(req: Request) {
+  try {
+    const { id } = await req.json();
+    books = books.filter((book) => book.id !== id);
+    return NextResponse.json({ message: "Book deleted successfully!" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ message: "Error deleting book!" }, { status: 500 });
   }
 }

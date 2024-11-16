@@ -1,9 +1,18 @@
-'use client'
-import { useEffect, useState } from 'react';
-
+"use client";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { CiEdit } from "react-icons/ci";
+import { MdDeleteOutline } from "react-icons/md";
 
 export default function Books() {
   const [books, setBooks] = useState([]);
+  const [newBook, setNewBook] = useState({
+    title: "",
+    author: "",
+    image: "",
+    available: true,
+  });
+  const [editBook, setEditBook] = useState(null);
 
   useEffect(() => {
     fetchBooks();
@@ -11,7 +20,7 @@ export default function Books() {
 
   const fetchBooks = async () => {
     try {
-      const res = await fetch('/api/books'); 
+      const res = await fetch("/api/books");
       const data = await res.json();
       setBooks(data);
     } catch (error) {
@@ -19,27 +28,176 @@ export default function Books() {
     }
   };
 
+  const addBook = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("title", newBook.title);
+      formData.append("author", newBook.author);
+      formData.append("image", newBook.image);
+      formData.append("available", newBook.available);
+
+      await fetch("/api/books", {
+        method: "POST",
+        body: JSON.stringify(newBook),
+        headers: { "Content-Type": "application/json" },
+      });
+      setNewBook({ title: "", author: "", image: "", available: true });
+      fetchBooks();
+    } catch (error) {
+      console.error("Error adding book:", error);
+    }
+  };
+
+  const updateBook = async () => {
+    try {
+      await fetch("/api/books", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editBook),
+      });
+      setEditBook(null);
+      fetchBooks();
+    } catch (error) {
+      console.error("Error updating book:", error);
+    }
+  };
+
+  const deleteBook = async (id) => {
+    try {
+      await fetch("/api/books", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      fetchBooks();
+    } catch (error) {
+      console.error("Error deleting book:", error);
+    }
+  };
+
+  const handleImageUpload = (e, setState) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setState((prev) => ({ ...prev, image: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 className='md:text-3xl text-xl md:font-bold bg-gray-300 md:w-[60%] w-[80%]  p-3 text-center mx-auto text-white'>Book List Created By M Suleman</h1>
-      <ul className='flex justify-center items-center flex-wrap gap-5'>
+    <div className="p-[20px]">
+      <h1 className="text-xl font-bold mb-4">Book List</h1>
+      <ul className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {books.length > 0 ? (
           books.map((book) => (
-            <li key={book.id} style={{ margin: '10px 0', listStyle: 'none' }} className='space-x-4 text-center'>
-              <img
+            <li
+              key={book.id}
+              className="mb-[10px] p-[10px] border-white rounded-md"
+            >
+              <Image
                 src={book.image}
                 alt={book.title}
-                style={{ width: '400px', height: '300px',  marginBottom: '10px' }}
+                width={200}
+                height={200}
+                className="rounded-md object-cover  w-full h-[400px]"
               />
-              <h2 className='bg-gray-200 inline-block p-2 text-2xl mb-2'>Book Name: <span>{book.title}</span></h2>
-              <p className='text-xl mb-2'>Author: {book.author}</p>
-              <p className='text-lg font-bold'>Status: {book.available ? "Available" : "Not Available"}</p>
+              <h1 className="mt-4 bg-slate-300 w-[45%] text-center mx-auto p-3 text-lg md:text-xl">
+               {book.title}
+              </h1>
+              <p className="text-center text-xl my-2">Author : {book.author}</p>
+              <p className="text-center font-bold">
+                Status: {book.available ? "Available" : "Not Available"}
+              </p>
+              <button
+                className="bg-blue-500 text-white px-2 py-1 rounded"
+                onClick={() => setEditBook(book)}
+              >
+                <CiEdit size={30} />
+              </button>
+              <button
+                className="bg-red-500 text-white px-2 py-1 rounded ml-2 float-end"
+                onClick={() => deleteBook(book.id)}
+              >
+                <MdDeleteOutline size={30} />
+              </button>
             </li>
           ))
         ) : (
           <p>No books available.</p>
         )}
       </ul>
+
+      {editBook && (
+        <div className="my-[20px] flex flex-col justify-center items-center w-full">
+          <h2 className="text-2xl my-3">Edit Book</h2>
+          <input
+            type="text"
+            placeholder="Title"
+            value={editBook.title}
+            onChange={(e) =>
+              setEditBook({ ...editBook, title: e.target.value })
+            }
+            className="md:w-[50%] w-[100%] p-3 my-2 text-2xl outline-none"
+          />
+          <input
+            type="text"
+            placeholder="Author"
+            value={editBook.author}
+            onChange={(e) =>
+              setEditBook({ ...editBook, author: e.target.value })
+            }
+            className="md:w-[50%] w-[100%] p-3 my-2 text-2xl outline-none"
+          />
+          <input
+            type="file"
+            onChange={(e) => handleImageUpload(e, setEditBook)}
+            className="md:w-[50%] w-[100%] p-3 my-2 bg-white"
+          />
+          <button
+            className="bg-green-500 text-white px-2 py-3 rounded md:w-[20%] w-[90%] my-2 mx-auto"
+            onClick={updateBook}
+          >
+            Save Changes
+          </button>
+          <button
+            className="bg-gray-500 text-white px-2 py-3 rounded mx-auto md:w-[20%] w-[90%] my-2"
+            onClick={() => setEditBook(null)}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      <div className="my-[20px] flex flex-col justify-center items-center w-full">
+        <h2 className="text-2xl my-3">Add a New Book</h2>
+        <input
+          type="text"
+          placeholder="Title"
+          value={newBook.title}
+          onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
+          className="md:w-[50%] w-[100%] p-3 my-2 text-2xl outline-none"
+        />
+        <input
+          type="text"
+          placeholder="Author"
+          value={newBook.author}
+          onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
+          className="md:w-[50%] w-[100%] p-3 my-2 text-2xl outline-none"
+        />
+        <input
+          type="file"
+          onChange={(e) => handleImageUpload(e, setNewBook)}
+          className="md:w-[50%] w-[100%] p-3 my-2 bg-white"
+        />
+        <button
+          className="bg-blue-500 text-white mx-auto  py-3 text-xl rounded my-2 md:w-[20%] w-[90%]"
+          onClick={addBook}
+        >
+          Add Book
+        </button>
+      </div>
     </div>
   );
 }
