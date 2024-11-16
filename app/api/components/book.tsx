@@ -62,7 +62,7 @@ export default function Books() {
     }
   };
 
-  const deleteBook = async (id) => {
+  const deleteBook = async (id:number) => {
     try {
       await fetch("/api/books", {
         method: "DELETE",
