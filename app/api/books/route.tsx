@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     books.push({ ...newBook, id: books.length + 1 });
     return NextResponse.json({ message: "Book added successfully!" }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ message: "Error adding book!" }, { status: 500 });
+    return NextResponse.json({ message: "Error adding book!",error }, { status: 500 });
   }
 }
 
@@ -78,7 +78,7 @@ export async function PUT(req: Request) {
     );
     return NextResponse.json({ message: "Book updated successfully!" }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: "Error updating book!" }, { status: 500 });
+    return NextResponse.json({ message: "Error updating book!",error }, { status: 500 });
   }
 }
 
@@ -89,6 +89,6 @@ export async function DELETE(req: Request) {
     books = books.filter((book) => book.id !== id);
     return NextResponse.json({ message: "Book deleted successfully!" }, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ message: "Error deleting book!" }, { status: 500 });
+    return NextResponse.json({ message: "Error deleting book!",error }, { status: 500 });
   }
 }
