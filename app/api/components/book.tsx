@@ -5,7 +5,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
 
 export default function Books() {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [newBook, setNewBook] = useState<{
     title: string;
     author: string;
@@ -17,13 +17,8 @@ export default function Books() {
     image: "",
     available: true,
   });
-  const [editBook, setEditBook] = useState<{
-    id?: number;
-    title: string;
-    author: string;
-    image: string | File;
-    available: boolean;
-  } | null>(null);
+  const [editBook, setEditBook] = useState<Book | null>(null);
+
 
   useEffect(() => {
     fetchBooks();
