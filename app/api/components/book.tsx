@@ -6,13 +6,24 @@ import { MdDeleteOutline } from "react-icons/md";
 
 export default function Books() {
   const [books, setBooks] = useState([]);
-  const [newBook, setNewBook] = useState({
+  const [newBook, setNewBook] = useState<{
+    title: string;
+    author: string;
+    image: string | File;
+    available: boolean;
+  }>({
     title: "",
     author: "",
     image: "",
     available: true,
   });
-  const [editBook, setEditBook] = useState(null);
+  const [editBook, setEditBook] = useState<{
+    id?: number;
+    title: string;
+    author: string;
+    image: string | File;
+    available: boolean;
+  } | null>(null);
 
   useEffect(() => {
     fetchBooks();
@@ -75,16 +86,27 @@ export default function Books() {
     }
   };
 
-  const handleImageUpload = (e, setState) => {
-    const file = e.target.files[0];
+  const handleImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setState: React.Dispatch<
+      React.SetStateAction<{
+        title: string;
+        author: string;
+        image: string | File;
+        available: boolean;
+      }>
+    >
+  ) => {
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setState((prev) => ({ ...prev, image: reader.result }));
+        setState((prev) => ({ ...prev, image: reader.result as string }));
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Convert the file to a base64 string
     }
   };
+  
 
   return (
     <div className="p-[20px]">
