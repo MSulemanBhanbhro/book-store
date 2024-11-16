@@ -3,6 +3,13 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { CiEdit } from "react-icons/ci";
 import { MdDeleteOutline } from "react-icons/md";
+type Book = {
+  id: number;
+  title: string;
+  author: string;
+  image: string;
+  available: boolean;
+};
 
 export default function Books() {
   const [books, setBooks] = useState<Book[]>([]);
