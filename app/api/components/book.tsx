@@ -176,7 +176,12 @@ export default function Books() {
           />
           <input
             type="file"
-            onChange={(e) => handleImageUpload(e, setEditBook)}
+            onChange={(e) =>
+              setEditBook((prev) =>
+                prev ? { ...prev, title: e.target.value } : null
+              )
+            }
+
             className="md:w-[50%] w-[100%] p-3 my-2 bg-white"
           />
           <button
